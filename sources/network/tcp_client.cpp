@@ -26,7 +26,10 @@ tcp_client::connect(const std::string& host, unsigned int port) {
     std::condition_variable conn_cond_var;
 
     //! resolve host name
-    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
+    boost::asio::ip::tcp::resolver resolver(m_io_service.get());
+    boost::asio::ip::tcp::resolver::query query(host, std::to_string(port));
+    boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
+    boost::asio::ip::tcp::endpoint endpoint = iter->endpoint();
 
     //! async connect
     std::atomic_bool is_notified(false);
